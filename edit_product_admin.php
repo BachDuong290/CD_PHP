@@ -1,5 +1,5 @@
 <?php
-// Kết nối tới cơ sở dữ liệu
+
 include "connect.php";
 
 $error = '';
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = 'Có lỗi khi tải lên hình ảnh.';
         }
     } else {
-        $image_query = ''; // Không cập nhật ảnh nếu không có ảnh mới
+        $image_query = ''; 
     }
 
     // Nếu không có lỗi
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmt_update->execute()) {
             $success = 'Cập nhật sản phẩm thành công!';
-            header("Location: home_admin.php"); // Chuyển hướng sau khi cập nhật thành công
+            header("Location: home_admin.php"); 
             exit();
         } else {
             $error = 'Có lỗi xảy ra khi cập nhật sản phẩm: ' . $stmt_update->error;

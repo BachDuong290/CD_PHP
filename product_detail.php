@@ -29,7 +29,7 @@ if ($category_id > 0) {
 }
 
 // dữ liệu chi tiết
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) { // kt trong URL
     die("<p class='text-danger'>Không tìm thấy sản phẩm.</p>");
 }
 
@@ -44,11 +44,13 @@ $stmt->bind_param("i", $product_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
+// kt sản phẩm tồn tại ko
 if ($result->num_rows == 0) {
     die("<p class='text-danger'>Không tìm thấy sản phẩm.</p>");
 }
 
-$product = [];
+$product = []; // khởi tạo mảng
+
 while ($row = $result->fetch_assoc()) {
     if (empty($product)) {
         $product = [

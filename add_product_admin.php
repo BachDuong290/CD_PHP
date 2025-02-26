@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $created_at = $_POST['created_at'];
     $category_id = $_POST['category_id'];
     $image = $_FILES['image']['name'];
-
     $target_dir = "images/";
     $target_file = $target_dir . basename($image);
 
@@ -41,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result_check->num_rows > 0) {
         $error = 'ID sản phẩm đã tồn tại. Vui lòng nhập một ID khác.';
     } else {
+        // kt và tải ảnh
         if (empty($error)) {
             if (!is_dir($target_dir)) {
                 mkdir($target_dir, 0777, true);
             }
-
             if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
                 // Thêm sản phẩm vào cơ sở dữ liệu
                 $sql = "INSERT INTO products (id, name, price, stock, brand, volume, description, created_at, category_id, image) 

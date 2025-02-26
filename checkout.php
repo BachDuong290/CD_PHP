@@ -14,6 +14,7 @@ if (isset($_SESSION['user_id'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // kt dữ liệu
     if ($result->num_rows > 0) {
         $user_info = $result->fetch_assoc();
     } else {

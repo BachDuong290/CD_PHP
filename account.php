@@ -1,5 +1,5 @@
 <?php
-// Kết nối cơ sở dữ liệu
+
 include "connect.php";
 session_start();
 
@@ -17,7 +17,7 @@ $stmt_user->execute();
 $result_user = $stmt_user->get_result();
 $user_info = $result_user->fetch_assoc();
 
-
+// ds đơn hàng ng dùng
 $sql_orders = "SELECT 
                   o.id AS order_id, 
                   o.created_at, 
@@ -52,7 +52,6 @@ $cart_items = [];
 while ($row = $cart_result->fetch_assoc()) {
     $cart_items[] = $row;
 }
-
 
 $stmt_orders->close();
 $connect->close();

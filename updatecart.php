@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: login.php");
         exit();
     }
-
+    
+    // nhận id và kt 
     $product_id = intval($_POST['product_id']);
     $sql = "SELECT quantity FROM carts WHERE user_id = ? AND product_id = ?";
     $stmt = $connect->prepare($sql);
@@ -22,12 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $row = $result->fetch_assoc();
         $quantity = $row['quantity'];
 
+        // kt nút tăng/ giảm
         if (isset($_POST['increase'])) {
             $quantity++;
         } elseif (isset($_POST['decrease']) && $quantity > 1) {
             $quantity--;
         }
 
+        // truy vấn csdl carts
         $sql = "UPDATE carts SET quantity = ? WHERE user_id = ? AND product_id = ?";
         $stmt = $connect->prepare($sql);
         $stmt->bind_param("iii", $quantity, $user_id, $product_id);

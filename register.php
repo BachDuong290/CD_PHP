@@ -21,12 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (strlen($password) < 4) {
         $error = "Mật khẩu phải có ít nhất 4 ký tự!";
     } else {
-        // Kiểm tra xem username tồn tại 
         $stmt = $connect->prepare("SELECT * FROM Users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
 
+        // Kiểm tra xem username tồn tại 
         if ($result->num_rows > 0) {
             $error = "Tên người dùng đã tồn tại!";
         } else {
@@ -35,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("ssssss", $username, $fullname, $email, $password, $address, $phone_number);
 
             if ($stmt->execute()) {
-                
                 header("Location: login.php");
                 exit();
             } else {

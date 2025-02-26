@@ -8,15 +8,17 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id']; 
 
-
+// kt pt yc
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    // lấy và xử lý 
     $full_name = trim($_POST["full_name"]);
     $email = trim($_POST["email"]);
     $phone_number = trim($_POST["phone_number"]);
     $address = trim($_POST["address"]);
     $payment_method = $_POST["payment_method"] ?? 'Cash'; 
 
+    // kt dữ liệu
     if (empty($full_name) || empty($email) || empty($phone_number) || empty($address)) {
         die("Lỗi: Tất cả các trường thông tin đều phải được điền đầy đủ!");
     }
@@ -25,14 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql_total = "SELECT c.product_id, c.quantity, p.price, (c.quantity * p.price) AS item_total FROM carts c 
                   JOIN products p ON c.product_id = p.id 
                   WHERE c.user_id = ?";
-    
+    // thực thi truy vấn
     $stmt_total = $connect->prepare($sql_total);
     $stmt_total->bind_param('i', $user_id);
     $stmt_total->execute();
     $result_total = $stmt_total->get_result();
     
+    // lưu thông tin
     $cart_items = []; 
-
     while ($row = $result_total->fetch_assoc()) {
         $cart_items[] = $row; 
         $total += $row['item_total']; 
@@ -42,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Lỗi: Giỏ hàng trống!");
     }
 
+    // start giao dịch
     $connect->begin_transaction();
     try {
         // Tạo mới đơn hàng (lưu vào bảng orders)
@@ -80,6 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new Exception("Lỗi khi lưu thông tin thanh toán: " . $stmt_payment->error);
         }
 
+        // update
         $sql_update_payment = "UPDATE payments SET payment_status = 'Paid' WHERE order_id = ?";
         $stmt_update_payment = $connect->prepare($sql_update_payment);
         $stmt_update_payment->bind_param('i', $order_id);
@@ -93,17 +97,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_delete_cart = $connect->prepare($sql_delete_cart);
         $stmt_delete_cart->bind_param('i', $user_id);
 
+        // kt xửu lý lỗi
         if (!$stmt_delete_cart->execute()) {
             throw new Exception("Lỗi khi xóa giỏ hàng: " . $stmt_delete_cart->error);
         }
 
-        $connect->commit();
+        $connect->commit(); // lưu
 
         header("Location: order_success.php?order_id=$order_id");
         exit();
     } catch (Exception $e) {
-
-        $connect->rollback();
+        $connect->rollback(); // hủy khi lỗi
         die("Lỗi khi xử lý thanh toán: " . $e->getMessage());
     }
 }

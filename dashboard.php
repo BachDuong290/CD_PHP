@@ -6,9 +6,8 @@ $sql = "SELECT id, image, name, price, stock FROM products LIMIT 4";
 $result = $connect->query($sql);
 
 $products = [];
-
 if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) { // kt dữ liệu -> lặp kq -> lưu
         $products[] = $row;
     }
 }
@@ -41,7 +40,7 @@ if ($category_id > 0) {
 }
 
 // Xử lý tìm kiếm sản phẩm
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : ''; // lấy từ khóa
 $search_results = [];
 
 if (!empty($search)) {

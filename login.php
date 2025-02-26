@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
+    // kt đầu vào
     if (empty($email) || empty($password)) {
         $error = "Vui lòng nhập đầy đủ thông tin!";
     } else {
@@ -17,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $result = $stmt->get_result();
 
+        // kt thành công or thất bại
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
             $_SESSION['user_id'] = $user['id'];

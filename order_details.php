@@ -24,6 +24,7 @@ $sql_orders = "
     WHERE o.user_id = ?
     GROUP BY o.id
     ORDER BY o.created_at DESC";
+    // cb và thực thi truy vấn 
 $stmt_orders = $connect->prepare($sql_orders);
 $stmt_orders->bind_param('i', $user_id);
 $stmt_orders->execute();
@@ -39,11 +40,11 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $cart_result = $stmt->get_result();
 
+// lưu giỏ hàng
 $cart_items = [];
 while ($row = $cart_result->fetch_assoc()) {
     $cart_items[] = $row;
 }
-
 
 $stmt_orders->close();
 $connect->close();

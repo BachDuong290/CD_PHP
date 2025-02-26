@@ -1,17 +1,32 @@
 <?php
-session_start(); // Bắt đầu session để theo dõi người dùng đăng nhập
+session_start();
 
-// Kiểm tra xem người dùng đã đăng nhập chưa, nếu chưa thì chuyển hướng đến trang đăng nhập
+// Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
+    header("Location: login.php");
     exit();
 }
 
 include "connect.php";
-$user_id = $_SESSION['user_id']; // Lấy user_id từ session
+$user_id = $_SESSION['user_id'];
 
-// Truy vấn giỏ hàng của người dùng đã đăng nhập
-$sql = "SELECT c.product_id, c.quantity, p.name, p.price, p.image
+// Xử lý xóa sản phẩm khỏi giỏ hàng
+if (isset($_GET['delete_id'])) {
+    $delete_id = intval($_GET['delete_id']);
+    $delete_sql = "DELETE FROM carts WHERE user_id = ? AND product_id = ?";
+    $stmt = $connect->prepare($delete_sql);
+    $stmt->bind_param("ii", $user_id, $delete_id);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Đã xóa sản phẩm khỏi giỏ hàng!'); window.location.href='cart.php';</script>";
+    } else {
+        echo "<script>alert('Lỗi khi xóa sản phẩm!');</script>";
+    }
+    $stmt->close();
+}
+
+// Lấy danh sách sản phẩm trong giỏ hàng
+$sql = "SELECT c.product_id, c.quantity, p.name, p.price, p.image 
         FROM carts c
         JOIN products p ON c.product_id = p.id
         WHERE c.user_id = ?";
@@ -24,7 +39,7 @@ $cart_items = [];
 while ($row = $cart_result->fetch_assoc()) {
     $cart_items[] = $row;
 }
-
+$stmt->close();
 
 // Xử lý đặt hàng
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['checkout'])) {
@@ -32,17 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['checkout'])) {
     foreach ($cart_items as $item) {
         $total += $item['price'] * $item['quantity'];
     }
-
     if ($total == 0) {
         echo "<script>alert('Giỏ hàng trống! Không thể Đặt hàng.');</script>";
     } else {
         echo "<script>alert('Đặt hàng thành công! Tổng đơn hàng: " . number_format($total, 2) . " VNĐ');</script>";
-
         header("Location: checkout.php?total=" . $total);
         exit();
     }
 }
-
 $connect->close();
 ?>
 

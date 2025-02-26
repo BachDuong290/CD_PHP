@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_id'])) {
     $product_id = intval($_POST['product_id']);
     $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1; 
 
-    // Kiểm tra sản phẩm cart
+    // Kiểm tra sản phẩm trong cart
     $check_sql = "SELECT quantity FROM carts WHERE user_id = ? AND product_id = ?";
     $stmt = $connect->prepare($check_sql);
     $stmt->bind_param("ii", $user_id, $product_id);
